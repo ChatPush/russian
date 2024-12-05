@@ -42,8 +42,9 @@ if defined?(ActiveModel::Errors)
       def full_messages
         full_messages = []
 
-        each do |attribute, messages|
-          messages = Array.wrap(messages)
+        each do |error|
+          attribute = error.attribute
+          messages = Array.wrap(error.messages)
           next if messages.empty?
 
           if attribute == :base
@@ -57,7 +58,7 @@ if defined?(ActiveModel::Errors)
               if m =~ /^\^/
                 full_messages << m[1..-1]
               else
-                full_messages << I18n.t(:"errors.format", options.merge(:message => m))
+                full_messages << I18n.t(:"errors.format", **options.merge(:message => m))
               end
             end
           end
