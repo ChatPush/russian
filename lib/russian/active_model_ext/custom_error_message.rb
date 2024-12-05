@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*- 
+# -*- encoding: utf-8 -*-
 
 if defined?(ActiveModel::Errors)
   module ActiveModel
@@ -13,19 +13,19 @@ if defined?(ActiveModel::Errors)
       # теперь не имеют префикса с названием атрибута если в сообщении об ошибке первым символом указан "^".
       #
       # Так, например,
-      # 
+      #
       #   validates_acceptance_of :accepted_terms, :message => 'нужно принять соглашение'
-      # 
+      #
       # даст сообщение
-      # 
+      #
       #   Accepted terms нужно принять соглашение
-      # 
+      #
       # однако,
-      # 
+      #
       #   validates_acceptance_of :accepted_terms, :message => '^Нужно принять соглашение'
-      # 
+      #
       # даст сообщение
-      # 
+      #
       #   Нужно принять соглашение
       #
       #
@@ -44,22 +44,19 @@ if defined?(ActiveModel::Errors)
 
         each do |error|
           attribute = error.attribute
-          messages = Array.wrap(error.messages)
-          next if messages.empty?
+          message = error.message
 
           if attribute == :base
-            messages.each {|m| full_messages << m }
+            full_messages << message
           else
             attr_name = attribute.to_s.gsub('.', '_').humanize
             attr_name = @base.class.human_attribute_name(attribute, :default => attr_name)
             options = { :attribute => attr_name, :default => "%{attribute} %{message}" }
 
-            messages.each do |m|
-              if m =~ /^\^/
-                full_messages << m[1..-1]
-              else
-                full_messages << I18n.t(:"errors.format", **options.merge(:message => m))
-              end
+            if message =~ /^\^/
+              full_messages << message[1..-1]
+            else
+              full_messages << I18n.t(:"errors.format", **options.merge(:message => message))
             end
           end
         end
